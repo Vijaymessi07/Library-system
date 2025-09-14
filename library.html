@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Boothaga Kadai - Library Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #fff;
+      font-family: "Poppins", sans-serif;
+      min-height: 100vh;
+    }
+    .navbar {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .hero {
+      text-align: center;
+      padding: 5rem 1rem;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+    }
+    .hero p {
+      font-size: 1.2rem;
+      opacity: 0.8;
+    }
+    .glass-card {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      padding: 2rem;
+      text-align: center;
+      backdrop-filter: blur(15px);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+    }
+    .glass-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    }
+    .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      font-size: 0.9rem;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <div class="container">
+      <a class="navbar-brand fw-bold" href="#">📚 Boothaga Kadai</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+              data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item"><a class="nav-link" href="/adme.html">Add Member</a></li>
+          <li class="nav-item"><a class="nav-link" href="/mumem.html">Add Multiple Members</a></li>
+          <li class="nav-item"><a class="nav-link" href="/adbo.html">Add Book</a></li>
+          <li class="nav-item"><a class="nav-link" href="/admub.html">Add Multiple Books</a></li>
+          <li class="nav-item"><a class="nav-link" href="/libser.html">Services</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero mt-5 pt-5">
+    <h1>Welcome to Boothaga Kadai</h1>
+    <p>Manage your library members, books, and services seamlessly.</p>
+  </section>
+
+  <!-- Stats -->
+  <div class="container my-5">
+    <div class="row g-4">
+      <div class="col-md-6 col-lg-3">
+        <div class="glass-card">
+          <div class="icon">👥</div>
+          <h5>Members</h5>
+          <h2 id="membersCount">0</h2>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="glass-card">
+          <div class="icon">📖</div>
+          <h5>Books</h5>
+          <h2 id="booksCount">0</h2>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="glass-card">
+          <div class="icon">➕</div>
+          <h5>Add</h5>
+          <a href="/admub.html" class="btn btn-outline-light btn-sm mt-2">Add Multiple Books</a><br>
+          <a href="/mumem.html" class="btn btn-outline-light btn-sm mt-2">Add Multiple Members</a>
+        </div>
+      </div>
+      <div class="col-md-6 col-lg-3">
+        <div class="glass-card">
+          <div class="icon">⚙️</div>
+          <h5>Services</h5>
+          <a href="/libser.html" class="btn btn-outline-light btn-sm mt-2">Manage Services</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Boothaga Kadai | Designed with ❤️ for a modern library</p>
+  </footer>
+
+  <script>
+    // Fetch members and books counts from localStorage
+    const members = JSON.parse(localStorage.getItem("members")) || [];
+    const books = JSON.parse(localStorage.getItem("books")) || [];
+
+    // Update counts
+    document.getElementById("membersCount").innerText = members.length;
+    document.getElementById("booksCount").innerText = books.length;
+  </script>
+
+</body>
+</html>

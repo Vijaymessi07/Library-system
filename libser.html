@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library Services</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+  body {
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color: #fff;
+    font-family:"Poppins",sans-serif;
+    min-height:100vh;
+    padding-top: 4rem;
+  }
+  .container { max-width: 900px; }
+  .search-input { margin-bottom: 1.5rem; padding: 0.8rem; border-radius: 10px; border: none; width: 100%; font-size:1rem; }
+  .search-result { background: rgba(255,255,255,0.08); padding: 1.2rem; border-radius: 15px; margin-bottom: 1rem; box-shadow: 0 0 15px rgba(0,0,0,0.3); position:relative;}
+  .editable { background: rgba(255,255,255,0.1); border:none; color:#fff; width:100%; padding:5px; border-radius:5px; margin-bottom:5px; font-size:0.95rem;}
+  .editable:focus { background: rgba(255,255,255,0.3); outline:none;}
+  .added-time { font-size: 0.85rem; opacity: 0.7; margin-top: 5px; }
+  h3 { margin-bottom: 1rem; text-align:center;}
+  .help-btn, .home-btn {
+    position: fixed;
+    bottom: 20px;
+    z-index: 1000;
+    padding: 0.6rem 1.2rem;
+    font-weight: 600;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .help-btn { right: 20px; background-color: #ffc107; color:#000; border:none;}
+  .help-btn:hover { transform: translateY(-3px); box-shadow:0 6px 20px rgba(0,0,0,0.5);}
+  .home-btn { left: 20px; background-color: #0d6efd; color:#fff; border:none;}
+  .home-btn:hover { transform: translateY(-3px); box-shadow:0 6px 20px rgba(0,0,0,0.5);}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h3>Library Services 🔍</h3>
+
+  <!-- Search input -->
+  <input type="text" id="searchInput" class="search-input" placeholder="Search Members or Books by Name/ID/Mobile/Email">
+
+  <!-- Results will show here -->
+  <div id="results"></div>
+</div>
+
+<!-- Back to Home button -->
+<button class="home-btn" onclick="window.location.href='library.html'">🏠 Home</button>
+
+<!-- Help Button -->
+<button class="help-btn" onclick="alert('Type a name, ID, mobile, or email of a member or book. Editable fields can be changed directly. Changes are saved automatically.')">❓ Help</button>
+
+<script>
+// Fetch data from localStorage
+const members = JSON.parse(localStorage.getItem("members")) || [];
+const books = JSON.parse(localStorage.getItem("books")) || [];
+
+const resultsDiv = document.getElementById("results");
+const searchInput = document.getElementById("searchInput");
+
+// Helper to format "time ago"
+function timeAgo(dateStr) {
+  const now = new Date();
+  const past = new Date(dateStr);
+  const diff = Math.floor((now - past) / 1000); // diff in seconds
+
+  if (diff < 60) return `${diff} sec ago`;
+  if (diff < 3600) return `${Math.floor(diff/60)} min ago`;
+  if (diff < 86400) return `${Math.floor(diff/3600)} hr ago`;
+  if (diff < 2592000) return `${Math.floor(diff/86400)} day(s) ago`;
+  if (diff < 31104000) return `${Math.floor(diff/2592000)} month(s) ago`;
+  return `${Math.floor(diff/31104000)} year(s) ago`;
+}
+
+// Render search results
+function renderResults(filter="") {
+  resultsDiv.innerHTML = "";
+  const val = filter.toLowerCase();
+
+  // Members
+  members.forEach((member, idx) => {
+    const text = `${member.name} ${member.id} ${member.mobile} ${member.email || ''}`.toLowerCase();
+    if(!text.includes(val)) return;
+
+    const div = document.createElement("div");
+    div.className = "search-result";
+    div.innerHTML = `
+      <strong>Member:</strong><br>
+      Name: <input class="editable" value="${member.name}" data-index="${idx}" data-type="name"><br>
+      ID: <input class="editable" value="${member.id}" data-index="${idx}" data-type="id"><br>
+      Mobile: <input class="editable" value="${member.mobile}" data-index="${idx}" data-type="mobile"><br>
+      Email: <input class="editable" value="${member.email || ''}" data-index="${idx}" data-type="email"><br>
+      <span class="added-time">Added: ${member.createdAt ? timeAgo(member.createdAt) : "Unknown"}</span>
+    `;
+    resultsDiv.appendChild(div);
+  });
+
+  // Books
+  books.forEach((book, idx) => {
+    const text = `${book.name} ${book.id}`.toLowerCase();
+    if(!text.includes(val)) return;
+
+    const div = document.createElement("div");
+    div.className = "search-result";
+    div.innerHTML = `
+      <strong>Book:</strong><br>
+      Name: <input class="editable" value="${book.name}" data-index="${idx}" data-type="name" data-category="books"><br>
+      ID: <input class="editable" value="${book.id}" data-index="${idx}" data-type="id" data-category="books"><br>
+      <span class="added-time">Added: ${book.createdAt ? timeAgo(book.createdAt) : "Unknown"}</span>
+    `;
+    resultsDiv.appendChild(div);
+  });
+
+  if(resultsDiv.innerHTML === "") {
+    resultsDiv.innerHTML = `<p style="text-align:center;opacity:0.8;">No results found for "<strong>${filter}</strong>"</p>`;
+  }
+}
+
+// Save editable changes
+document.addEventListener("change", e => {
+  if(!e.target.classList.contains("editable")) return;
+  const idx = e.target.dataset.index;
+  const type = e.target.dataset.type;
+  if(e.target.dataset.category === "books") {
+    books[idx][type] = e.target.value;
+    localStorage.setItem("books", JSON.stringify(books));
+  } else {
+    members[idx][type] = e.target.value;
+    localStorage.setItem("members", JSON.stringify(members));
+  }
+});
+
+// Search input event
+searchInput.addEventListener("input", e => {
+  renderResults(e.target.value);
+});
+
+// Initial render (all members/books if input is empty)
+renderResults();
+</script>
+
+</body>
+</html>
